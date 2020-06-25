@@ -49,6 +49,27 @@ public class SpartanTests {
         when().
                 post("/api/spartans").prettyPeek().
         then().statusCode(201);
+    }
 
+    @Test
+    @DisplayName("Delete some spartan")
+    public void deleteSpartanTest(){
+       // {id} - path parameter
+        // you can not delete smth twice
+        // we use delete() method to delete smth
+        // 204 - No content, most common status code for successful delete action
+        // authentication - who you are? you need to tell to the server who you are before getting any data
+        // ALL HTTP STATUS CODES HAVE SAME MEANING EVERYWHERE
+        // 201 - always after successful POST request
+        // 200 - always after successful GET request
+        // 204 - always after successful DELETE request
+        // 4XX - always after unsuccessful request and it was your fault
+        given().
+                auth().basic("admin", "admin").
+                baseUri(BASE_URL).
+         when().
+                delete("/api/spartans/{id}", 102).prettyPeek().
+        then().
+                statusCode(204);
     }
 }
