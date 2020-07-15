@@ -97,17 +97,55 @@ public class ORDSTestsDay4 {
 
     // let's find employees with highest salary. Use GPath
      @Test
-    public void getEmployeeTest(){
-        Response response = when().get("/employees").prettyPeek();
+    public void getEmployeeTest() {
+         Response response = when().get("/employees").prettyPeek();
          // collectionName.max{it.propertyName}
-        Map<String, ?> employeeWithHighestSalary = response.jsonPath().get("items.max{it.salary}");
+         Map<String, ?> employeeWithHighestSalary = response.jsonPath().get("items.max{it.salary}");
          System.out.println("employeeWithHighestSalary = " + employeeWithHighestSalary);
 
-        Map<String, ?> employeeWithLowestSalary = response.jsonPath().get("items.min{it.salary}");
+         Map<String, ?> employeeWithLowestSalary = response.jsonPath().get("items.min{it.salary}");
          System.out.println("employeeWithLowestSalary = " + employeeWithLowestSalary);
 
          int companyPayroll = response.jsonPath().get("items.collect{it.salary}.sum()");
          System.out.println("Company's Payroll = " + companyPayroll);
+     }
+
+         /**
+          * given path parameter is "/employees"
+          * when user makes get request
+          * then assert that status code is 200
+          * Then user verifies that every employee has positive salary
+          */
+
+         @Test
+         @DisplayName("Verifies that every employee has positive salary")
+         public void testSalary(){
+             when().
+                     get("/employees").
+             then().assertThat().
+                     statusCode(200).
+                     body("items.salary", everyItem(greaterThan(0))).
+                     log().ifError();
+         }
+
+    /**
+     * given path parameter is "/employees/{id}"
+     * and path parameter is 101
+     * when user makes get request
+     * then assert that status code is 200
+     * and verifies that phone number is 515-123-4568
+     */
+
+    @Test
+    public void verifyPhoneNumber(){
+        Response response = when().get("/employees/{id}", 101).prettyPeek();
+
+        String expected = "515-123-4568";
+        String actual = response.jsonPath().getString("phone_number").replace(".", "-");
+
+        assertEquals(200, response.statusCode());
+        assertEquals(expected, actual);
     }
+
 
 }
